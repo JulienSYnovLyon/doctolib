@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import logo from './assets/icone-doctolib192x192.png';
-import initConnexion from './firebase';
-import newUser from './newUser';
+import logo from '../assets/icone-doctolib192x192.png';
+import initConnexion from '../firebase';
+import newUser from '../newUser';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
+import { useNavigate } from 'react-router-dom';
 
 initConnexion();
 //newUser();
@@ -10,7 +11,7 @@ initConnexion();
 function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const navigate = useNavigate()
   function handleUsernameChange(e) {
     setUsername(e.target.value);
   }
@@ -21,15 +22,16 @@ function LoginPage() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    handleSignIn(username, password) 
+    handleSignIn(username, password ) 
   }
 
-  function handleSignIn(email, password) {
+  function handleSignIn(email, password ) {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => { 
     const user = userCredential.user;
     console.log(user)
+    navigate('/form')
   })
   .catch((error) => {
     const errorCode = error.code;
