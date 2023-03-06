@@ -1,34 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import React, { useState } from 'react';
+import logo from './assets/icone-doctolib192x192.png';
+import initConnexion from './firebase';
+import newUser from './newUser';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
 
-function App() {
-  const [count, setCount] = useState(0)
+initConnexion();
+//newUser();
+
+function LoginPage() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  function handleUsernameChange(e) {
+    setUsername(e.target.value);
+  }
+
+  function handlePasswordChange(e) {
+    setPassword(e.target.value);
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    handleSignIn(username, password) 
+  }
+
+  function handleSignIn(email, password) {
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => { 
+    const user = userCredential.user;
+    console.log(user)
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
+
+  }
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <form onSubmit={handleSubmit}>
+      <div className="logo-container">
+        <img src={logo} alt="Doctolib logo" />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+      <h1>Connexion</h1>
+      <label>
+        Nom d'utilisateur:
+        <input type="text" value={username} onChange={handleUsernameChange} />
+      </label>
+      <br />
+      <label>
+        Mot de passe:
+        <input type="password" value={password} onChange={handlePasswordChange} />
+      </label>
+      <br />
+      <button type="submit">Log In</button>
+    </form>
+  );
 }
 
-export default App
+export default LoginPage;
