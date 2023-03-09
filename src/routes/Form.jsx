@@ -3,7 +3,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './Form.css';
 import logo from '../assets/icone-doctolib192x192.png';
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs , addDoc , Timestamp} from "firebase/firestore";
 import db from '../firebase';
 import { getAuth } from "firebase/auth";
 
@@ -37,16 +37,26 @@ function FormPage() {
     setDate(date);
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
+    const user = getAuth().currentUser;
     const medecinID = getSelectedMedecinId()
-    console.log(medecinID)
+    let timeStamp = date.getTime();
+    try {
+      const docRef = await addDoc(collection(db, "rdv"), {
+        patient: user.uid,
+        medecin: medecinID,
+        date: timeStamp,
+      });
+  
+    } catch (error) {
+      console.error("Erreur lors de l'ajout en bdd: ", error);
+    }
   }
 
   const getSelectedMedecinId = () => {
     const selectElement = document.getElementById("select-name");
     const selectedOption = selectElement.options[selectElement.selectedIndex];
-    console.log(selectedOption)
     return selectedOption.getAttribute("value");
   }
 
@@ -71,9 +81,13 @@ function FormPage() {
           className="form-date-picker"
           selected={date}
           onChange={handleDateChange}
-          dateFormat="dd/MM/yyyy"
+          dateFormat="dd/MM/yyyy HH:mm"
+          showTimeSelect
+          showTimeSelectOnly={false}
+          timeIntervals={15}
+          timeCaption="Heure"
         />
-      </div>
+    </div>
       <button className="form-submit-button" type="submit">Envoyer</button>
     </form>
   );
