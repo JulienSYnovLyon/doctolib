@@ -1,12 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './Form.css';
 import logo from '../assets/icone-doctolib192x192.png';
+import { collection, getDocs } from "firebase/firestore";
+import db from '../firebase';
+import { getAuth } from "firebase/auth";
 
 function FormPage() {
   const [name, setName] = useState('');
   const [date, setDate] = useState(new Date());
+  const [medecins, setMedecins] = useState([]);
+
+  useEffect(() => {
+    const fetchMedecins = async () => {
+      const querySnapshot = await getDocs(collection(db, "medecins"));
+      const data = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        nomComplet: `${doc.data().nom} ${doc.data().prenom}`
+      }));
+      setMedecins(data);
+    };
+  
+    getAuth().onAuthStateChanged((user) => {
+      if (user) {
+        fetchMedecins();
+      }
+    });
+  }, []);
 
   function handleNameChange(e) {
     setName(e.target.value);
@@ -18,35 +39,42 @@ function FormPage() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    console.log(`Name: ${name}, Date: ${date}`);
+    const medecinID = getSelectedMedecinId()
+    console.log(medecinID)
+  }
+
+  const getSelectedMedecinId = () => {
+    const selectElement = document.getElementById("select-name");
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    console.log(selectedOption)
+    return selectedOption.getAttribute("value");
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-        <div className="logo-container">
+    <form className="form-container" onSubmit={handleSubmit}>
+      <div className="form-logo-container">
         <img src={logo} alt="Doctolib logo" />
       </div>
       <br></br>
       <div className="form-group">
-      <label>
-        Nom:
-        <select onChange={handleNameChange}>
-            <option value="jean">Jean</option>
-            <option value="pierre">Pierre</option>
-            <option value="jacques">Jacques</option>
+        <label htmlFor="select-name">Nom:</label>
+        <select id="select-name" className="form-select" onChange={handleNameChange}>
+          {medecins.map((medecin) => (
+            <option key={medecin.id} value={medecin.id}>{medecin.nomComplet}</option>
+          ))}
         </select>
-      </label>
       </div>
       <div className="form-group">
-        <label htmlFor="date">Date:</label>
+        <label htmlFor="date-picker">Date:</label>
         <DatePicker
-          id="date"
+          id="date-picker"
+          className="form-date-picker"
           selected={date}
           onChange={handleDateChange}
           dateFormat="dd/MM/yyyy"
         />
       </div>
-      <button type="submit">Envoyer</button>
+      <button className="form-submit-button" type="submit">Envoyer</button>
     </form>
   );
 }

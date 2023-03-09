@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import logo from '../assets/icone-doctolib192x192.png';
-import initConnexion from '../firebase';
-import newUser from '../newUser';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
 import { useNavigate } from 'react-router-dom';
-
-initConnexion();
-//newUser();
+import './Login.css';
 
 function LoginPage() {
+  
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate()
@@ -30,7 +27,6 @@ function LoginPage() {
     signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => { 
     const user = userCredential.user;
-    console.log(user)
     navigate('/form')
   })
   .catch((error) => {
@@ -41,22 +37,22 @@ function LoginPage() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="login-form" onSubmit={handleSubmit}>
       <div className="logo-container">
         <img src={logo} alt="Doctolib logo" />
       </div>
       <h1>Connexion</h1>
-      <label>
+      <label className="login-label">
         Nom d'utilisateur:
-        <input type="text" value={username} onChange={handleUsernameChange} />
+        <input className="login-input" type="text" value={username} onChange={handleUsernameChange} />
       </label>
       <br />
-      <label>
+      <label className="login-label">
         Mot de passe:
-        <input type="password" value={password} onChange={handlePasswordChange} />
+        <input className="login-input" type="password" value={password} onChange={handlePasswordChange} />
       </label>
       <br />
-      <button type="submit">Log In</button>
+      <button className="login-button" type="submit">Log In</button>
     </form>
   );
 }
