@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import {createBrowserRouter,RouterProvider,} from "react-router-dom";
 import LoginPage from './routes/Login';
 import FormPage from './routes/Form';
+import RDVPage from './routes/Rdv';
 
 const router = createBrowserRouter([
     {
@@ -12,6 +13,10 @@ const router = createBrowserRouter([
     {
       path: "/form",
       element: <FormPage />,
+    },
+    {
+      path: "/rdv",
+      element: <RDVPage />,
     },
   ]);
 

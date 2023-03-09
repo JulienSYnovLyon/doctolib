@@ -3,14 +3,16 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './Form.css';
 import logo from '../assets/icone-doctolib192x192.png';
-import { collection, getDocs , addDoc , Timestamp} from "firebase/firestore";
+import { collection, getDocs , addDoc} from "firebase/firestore";
 import db from '../firebase';
 import { getAuth } from "firebase/auth";
+import { useNavigate } from 'react-router-dom';
 
 function FormPage() {
-  const [name, setName] = useState('');
+
   const [date, setDate] = useState(new Date());
   const [medecins, setMedecins] = useState([]);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchMedecins = async () => {
@@ -29,10 +31,6 @@ function FormPage() {
     });
   }, []);
 
-  function handleNameChange(e) {
-    setName(e.target.value);
-  }
-
   function handleDateChange(date) {
     setDate(date);
   }
@@ -48,6 +46,8 @@ function FormPage() {
         medecin: medecinID,
         date: timeStamp,
       });
+
+      navigate('/rdv');
   
     } catch (error) {
       console.error("Erreur lors de l'ajout en bdd: ", error);
@@ -68,7 +68,7 @@ function FormPage() {
       <br></br>
       <div className="form-group">
         <label htmlFor="select-name">Nom:</label>
-        <select id="select-name" className="form-select" onChange={handleNameChange}>
+        <select id="select-name" className="form-select">
           {medecins.map((medecin) => (
             <option key={medecin.id} value={medecin.id}>{medecin.nomComplet}</option>
           ))}
