@@ -6,6 +6,10 @@ export default defineConfig({
   plugins: [
     react(), 
     VitePWA({
+      manifest: {
+        "theme_color": "#4835f6",
+        "background_color": "#ffffff",
+        "display": "browser",
         "scope": "/",
         "start_url": "/",
         "name": "doctolib project",
