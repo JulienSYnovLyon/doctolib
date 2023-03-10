@@ -22,18 +22,20 @@ function LoginPage() {
     handleSignIn(username, password ) 
   }
 
-  function handleSignIn(email, password ) {
+  function handleSignIn(email, password) {
     const auth = getAuth();
     signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => { 
-    const user = userCredential.user;
-    navigate('/form')
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-  });
-
+      .then((userCredential) => { 
+        const user = userCredential.user;
+        navigate('/form');
+      })
+      .catch((error) => {
+        if ('vibrate' in navigator) {
+          navigator.vibrate([200, 100, 200]);    
+        } else {
+          console.log('La vibration n\'est pas supportée par cet appareil.');
+        }
+      });
   }
 
   return (
