@@ -67,7 +67,6 @@ function LoginPage() {
     }
   }
   
-
   return (
       <form className="login-form" onSubmit={handleSubmit}>
         <div className="logo-container">
